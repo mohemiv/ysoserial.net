@@ -10,10 +10,6 @@ jobs:
       - name: Setup Nuget.exe
         uses: nuget/setup-nuget@v1
       - name: Restore packages
-        run: nuget restore ysoserial.sln
-      - name: Setup MSBuild.exe
-        uses: microsoft/setup-msbuild@v1.1
-      - name: Restore packages
         shell: pwsh
         run: |
           nuget restore ysoserial.sln -PackagesDirectory packages -NonInteractive -Verbosity detailed
@@ -22,6 +18,8 @@ jobs:
           if (!(Test-Path "packages\NDesk.Options.0.2.1\lib\NDesk.Options.dll")) {
             throw "NuGet dependencies were not restored correctly"
           }
+      - name: Setup MSBuild.exe
+        uses: microsoft/setup-msbuild@v1.1
       - name: Build with MSBuild
         run: msbuild ysoserial.sln -p:Configuration=Release
       - name: Prepare build artifact for stashing
