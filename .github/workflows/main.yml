@@ -12,11 +12,14 @@ jobs:
       - name: Restore packages
         shell: pwsh
         run: |
-          nuget restore ysoserial.sln -PackagesDirectory packages -NonInteractive -Verbosity detailed
+          nuget restore ysoserial.sln -NonInteractive
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       
-          if (!(Test-Path "packages\NDesk.Options.0.2.1\lib\NDesk.Options.dll")) {
-            throw "NuGet dependencies were not restored correctly"
+          nuget install ysoserial/packages.config -OutputDirectory packages -NonInteractive
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      
+          if (!(Test-Path "packages/NDesk.Options.0.2.1/lib/NDesk.Options.dll")) {
+            throw "NDesk.Options.dll is missing"
           }
       - name: Setup MSBuild.exe
         uses: microsoft/setup-msbuild@v1.1
